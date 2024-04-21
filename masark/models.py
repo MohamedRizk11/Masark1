@@ -15,20 +15,30 @@ class Users(models.Model):
     def __str__(self):
         return str(self.user_id)
 
+class FamousPlace(models.Model):
+    station = models.ForeignKey("Station", related_name='station_place', on_delete=models.SET_NULL,null=True)
 
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+    
 class Station(models.Model):
-    station_id = models.IntegerField(_("Station_Id"))  # Renamed to lowercase 'id'
+    station_id = models.IntegerField(_("Station_Id"),unique=True)  # Renamed to lowercase 'id'
     name = models.CharField(_("Name"), max_length=20)
-    famousPlaces = models.CharField(_("FamousPlaces"), max_length=50)
+    
+
     
     def __str__(self):
         return self.name
-   
+    
+
 
 class Ticket(models.Model):
-    stationid = models.ForeignKey("Station", verbose_name=_("StationID"), related_name="ticket_station", on_delete=models.SET_NULL, null=True)
+    from_station = models.ForeignKey(Station, related_name='from_station', on_delete=models.SET_NULL,null=True)
+    to_station = models.ForeignKey(Station, related_name='to_station', on_delete=models.SET_NULL,null=True)
     cost = models.FloatField(_("Cost"))
     time = models.FloatField(_("Time"))
 
     def __str__(self):
-        return str(self.stationid)  # Ensure to return a string representation
+        return f"Ticket from {self.from_station} to {self.to_station}"  # Ensure to return a string representation
